@@ -1,0 +1,688 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+<data>
+        <template id="assets_frontend" inherit_id="website.layout">
+          <xpath expr="//head" position="inside">
+              <link rel="stylesheet" href="/sale_enhancement/static/src/css/sale_enhancement.css" />
+          </xpath>
+        </template>
+
+<template id="product_categories_recursive" name="Top Brand">
+        <!--script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script-->
+        <script type="text/javascript">
+            $(document).ready(function() {
+                f_path = window.location.pathname ;
+                path = (window.location.pathname).split('/');
+                if (f_path.substring(0, 15) == '/shop/category/') {
+                    /*categ = path[path.length-2].split('-');
+                    categ = categ[categ.length-1];
+                    console.log("\n categgggggggggggggggggggggg", categ);
+                    if ($('#brdcrumb')) {
+                        $('#brdcrumb').remove();
+                    }
+                    var name = $('li[id="'+categ+'"]').attr('name');
+                    var url = window.location.pathname;
+                    var sel_li = $('ul#left_main li > a[href="'+url+'"]');
+
+                    $('ul#left_main').children().hide();
+                    if ($('ul#left_main > li[name="'+categ+'"]').length) {
+                        console.log("ifffffffffffffffffffffffffffff", categ);
+                        $('ul#left_main > li[name="'+categ+'"]').show();
+                    } else if ($('ul#left_main > li[id="'+name+'"]').length) {
+                        console.log("elseeeeeeeeeeeeeeeiffffffffffffffffff");
+                        $('ul#left_main > li[id="'+name+'"]').show();
+                    }
+                    else if (sel_li.length) {
+                        var parent_main = $('ul#left_main li > a[href="'+url+'"]').parentsUntil('#left_main');
+                        $(parent_main[parent_main.length - 1]).show();
+                    } else {
+                        console.log("elseeeeeeeeee");
+                        $('ul#left_main > li[id="'+categ+'"]').show();
+                    }
+
+                    var b_crumb = $('ul#left_main').find('li:visible:first > a').text();
+                    var b_crumb_txt = $.trim(b_crumb.toUpperCase());
+                    var b_crumb_href = $('ul#left_main').find('li:visible:first > a').attr('href');
+                    $('#products_grid_before').before('<div id="brdcrumb" style="padding-left:15px; text-transform: uppercase;"><a href="/shop">All </a><span style="color:#8c8c8c;">/</span><a href="'+b_crumb_href+'"> '+b_crumb_txt+' </a></div>')
+
+
+                    var url = window.location.pathname;
+                    var sel_li = $('ul#left_main li > a[href="'+url+'"]');
+                    if (sel_li.length) {
+                        var active_li_txt = $('ul#left_main li > a[href="'+url+'"]').text();
+                        var active_li_href = $('ul#left_main li > a[href="'+url+'"]').attr("href");
+                        console.log("active_li_txtactive_li_txt", active_li_txt);
+                        var parent_main = $('ul#left_main li > a[href="'+url+'"]').parentsUntil('#left_main');
+                        console.log("got itttt", $(parent_main[parent_main.length - 1]));
+                    }
+                    */
+                }
+            });
+        </script>
+        <style type="text/css">
+            .select_li {
+                //background-color: #ff6346;
+                //height: 3px;
+                background-color: #e7e7e7;
+            }
+            /*.select_li > a {
+                color: #ff6346 !important;
+            }*/
+        </style>
+        <t t-if="c">
+            <li id="main_menu" t-att-class="'select_li' if (int(c) == category.id if category else 0) or (int(c) == id)  else ''">
+                <a t-attf-href="/shop/category/#{int(c)}/#{ slug(c) }/" t-att-id="int(c)" t-field="c.name">
+                </a>
+            </li>
+        </t>
+        <t t-if="d1">
+            <t t-if="id">
+                <li class="left_categ parent dropdown" t-att-name="d1.parent_id.id" t-att-id="category.id" t-att-class="'active' if d1.id == int(category or 0) else ''">
+                <a class="left_categ" t-att-id="d1.parent_id.id" t-att-name="d1.id" t-attf-href="/shop/category/#{ slug(d1) }/#{ category.id }/">
+                    <span class="menu-title">
+                        <t t-esc="d1.name"/>
+                    </span>
+                    <b t-if="d1.child_id" class="caret"></b>
+                </a>
+                <div t-if="d1.child_id" class="dropdown-menu level1">
+                    <div class="dropdown-menu-inner">
+                        <div class="row">
+                            <div class="mega-col" data-colwidth="12" data-type="menu">
+                                <div class="mega-col-inner">
+                                    <ul class="parent dropdown-submenu" t-if="d1.child_id" t-att-name="d1.id" t-att-id="category.id">
+                                        <t t-foreach="d1.child_id" t-as="d1" class="dropdown-toggle" data-toggle="dropdown">
+                                            <t t-call="sale_enhancement.product_categories_recursive" />
+                                        </t>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                </li>
+            </t>
+            <t t-if="not id">
+                <li class="left_categ parent dropdown" t-att-name="d1.parent_id.id" t-att-id="d1.id" t-att-class="'active' if d1.id == int(category or 0) else ''">
+                <a class="left_categ" t-att-id="d1.id" t-att-name="d1.parent_id.id" t-attf-href="/shop/category/#{ slug(d1) }/">
+                    <span class="menu-title">
+                        <t t-esc="d1.name"/>
+                    </span>
+                    <b t-if="d1.child_id" class="caret"></b>
+                </a>
+                <div t-if="d1.child_id" class="dropdown-menu level1">
+                    <div class="dropdown-menu-inner">
+                        <div class="row">
+                            <div class="mega-col" data-colwidth="12" data-type="menu">
+                                <div class="mega-col-inner">
+                                    <ul class="parent dropdown-submenu" t-if="d1.child_id" t-att-id="d1.parent_id.id">
+                                        <t t-foreach="d1.child_id" t-as="d1" class="dropdown-toggle" data-toggle="dropdown">
+                                            <t t-call="sale_enhancement.product_categories_recursive" />
+                                        </t>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                </li>
+            </t>
+        </t>
+</template>
+
+<template id="header_topmenu" inherit_id="website.layout" name="Header Menu">
+    <xpath expr="//header/div" position="attributes">
+        <attribute name="class">navbar navbar-default</attribute>
+    </xpath>
+    <xpath expr="//header/div" position="before">
+        <style type="text/css">
+            .prod_pager {
+                vertical-align: middle;
+                float: right;
+                padding: 0;
+            }
+            .prod_pager .col-md-3 {
+                width: 100%;
+            }
+        </style>
+        <script type="text/javascript">
+            $(document).ready(function() {
+                $(".box-language a").each(function(){
+                    var href = $(this).attr('href').split('?')[0];
+                    if (href == window.location.pathname){
+                        $("#lang").text($(this).find('span').text());
+                    }
+                });
+                /*if ($('#all_lang button > span:empty')) {
+                    var name = $('.js_language_selector li a').attr('data-default-lang').text();
+                    $("#lang").text(name);
+                }*/
+            });
+        </script>
+        <div class="navbar navbar-default navbar-static-top" t-if="request.httprequest.path.startswith('/shop')">
+            <div class="offcanvas-container">
+                <section id="page" class="offcanvas-pusher" role="main">
+                    <div id="topbar">
+                        <div class="container">
+                            <div class="show-desktop">
+                                <div class="quick-top-link">
+                                    <div class="language btn-top pull-left">
+                                        <div class="language-wrapper pull-right">
+                                            <div class="quick-access btn-group btn-top" t-ignore="true" t-if="website.user_id != user_id">
+                                                <button type="button" class="form-control" data-toggle="dropdown">
+                                                    <span class="quick-icon">
+                                                        <t t-esc="user_id.name"/>
+                                                        <span class="fa fa-sort-asc"></span>
+                                                    </span>
+                                                </button>
+                                                <div class="dropdown-menu">
+                                                    <ul class="links">
+                                                            <a class="account" href="/web">
+                                                                <span class="fa fa-user"></span>
+                                                                My Account
+                                                            </a>
+                                                            <a class="list-item" href="/web/session/logout?redirect=/">
+                                                                <span class="fa fa-file"></span>
+                                                                Logout
+                                                            </a>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                            <div t-ignore="true" t-if="website.user_id == user_id" style="font-size: 16px;">
+                                                <a href="/web/login" role="menuitem" style="color:red;">
+                                                    Sign in
+                                                </a>
+                                            </div>
+                                            <t t-set="languages" t-value="website.get_languages()"/>
+                                            <div id="all_lang" class="btn-group">
+                                                <button type="button" class="form-control" data-toggle="dropdown" t-ignore="true" t-if="(len(languages) &gt; 1 or editable)">
+                                                    <t t-foreach="languages" t-as="lg">
+                                                        <t t-if="lg[0] == website.default_lang_code">
+                                                            <span id="lang">
+                                                                <t t-esc="lg[1].split('/').pop()"/>
+                                                            </span>
+                                                            <span class="fa fa-sort-asc"></span>
+                                                        </t>
+                                                    </t>
+                                                </button>
+                                                <div class="dropdown-menu dropdown">
+                                                    <div class="box-language">
+                                                        <t t-foreach="languages" t-as="lg">
+                                                            <a t-att-href="url_for('', lang=lg[0]) + '?' + keep_query()" t-att-data-default-lang="editable and 'true' if lg[0] == website.default_lang_code else None" class="list-item">
+                                                                <span class="item-name"><t t-esc="lg[1].split('/').pop()"/></span>
+                                                            </a>
+                                                        </t>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="header-main" t-if="not request.httprequest.path.startswith('/shop/mycart') and not request.httprequest.path.startswith('/shop/checkout') and not request.httprequest.path.startswith('/shop/payment') and not request.httprequest.path.startswith('/shop/confirmation')">
+                        <div class="row">
+                            <div class="container">
+                                <div id="search">
+                                    <t t-if="id">
+                                        <form t-attf-action="/shop/{{'category/%s/%s/' % (id, slug(category)) if category else ''}}" method="get" class="pagination form-inline col-md-3">
+                                            <input t-if="search.get('filters')" type="hidden" name="filters" t-att-value="search.get('filters')"/>
+                                            <div class="input-group">
+                                                <input type="text" name="search" class="input-search search-query form-control" placeholder="Search..." t-att-value="search.get('search') or ''"/>
+                                                    <span>
+                                                        <button class="button-search" type="submit"><i class="fa fa-search"></i></button>
+                                                    </span>
+                                            </div>
+                                        </form>
+                                    </t>
+                                    <t t-if="not id">
+                                        <form t-attf-action="/shop/{{'category/%s/' % slug(category) if category else ''}}" method="get" class="pagination form-inline col-md-3">
+                                            <input t-if="search.get('filters')" type="hidden" name="filters" t-att-value="search.get('filters')"/>
+                                            <div class="input-group">
+                                                <input type="text" name="search" class="input-search search-query form-control" placeholder="Search..." t-att-value="search.get('search') or ''"/>
+                                                    <span>
+                                                        <button class="button-search" type="submit"><i class="fa fa-search"></i></button>
+                                                    </span>
+                                            </div>
+                                        </form>
+                                    </t>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </xpath>
+    <xpath expr="//header//ul[@id='top_menu']/li[@class='divider']" position="replace">
+        <li class="divider" t-ignore="true" t-if="website.user_id != user_id and not request.httprequest.path.startswith('/shop')"/>
+    </xpath>
+    <xpath expr="//header//ul[@id='top_menu']/li[@class='dropdown']" position="replace">
+        <li class="dropdown" t-ignore="true" t-if="website.user_id != user_id and not request.httprequest.path.startswith('/shop')">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                <b>
+                    <span t-esc="(len(user_id.name)&gt;25) and (user_id.name[:23]+'...') or user_id.name"/>
+                    <span class="caret"></span>
+                </b>
+            </a>
+            <ul class="dropdown-menu js_usermenu" role="menu">
+                <li><a t-attf-href="/web/session/logout?redirect=/" role="menuitem">Logout</a></li>
+            </ul>
+        </li>
+    </xpath>
+</template>
+
+<template id="footer_customize" inherit_id="website.layout" name="Customize Footer">
+    <xpath expr="//div[@class='container hidden-print']" position="replace">
+        <div id="footer" class="footer-center">
+                <div class="container hidden-print">
+                    <div class="row">
+                        <div class="col-md-3 box pav-custom" name="product">
+                            <div class="box-heading">Our products &amp; Services</div>
+                            <ul class="list-unstyled" name="products">
+                                <li>
+                                    <a href="/">Home</a>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="col-md-3 box pav-custom" name="info">
+                            <div class="box-heading">Connect with us</div>
+                            <ul class="list-unstyled">
+                                <li>
+                                    <a href="/page/website.contactus">Contact us</a>
+                                </li>
+                            </ul>
+                            <ul class="social">
+                                <li t-ignore="true" style="line-height:30px;">
+                                    <a href="#">
+                                        <span class="fa fa-mobile-phone"></span>
+                                    </a>
+                                    Phone: <em t-field="res_company.phone"/>
+                                </li>
+                                <li t-ignore="true" style="line-height:30px;">
+                                    <a href="#">
+                                        <span class="fa fa-envelope"></span>
+                                    </a>
+                                     Email: <em t-field="res_company.email"/>
+                                </li>
+                            </ul>
+                            <h2>
+                                <a t-att-href="website.social_facebook" t-if="website.social_facebook">
+                                    <i class="fa fa-facebook-square"/>
+                                </a>
+                                <a t-att-href="website.social_twitter" t-if="website.social_twitter">
+                                    <i class="fa fa-twitter"/>
+                                </a>
+                                <a t-att-href="website.social_linkedin" t-if="website.social_linkedin">
+                                    <i class="fa fa-linkedin"/>
+                                </a>
+                                <a t-att-href="website.social_youtube" t-if="website.social_youtube">
+                                    <i class="fa fa-youtube-play"/>
+                                </a>
+                                <a t-att-href="website.social_googleplus" t-if="website.social_googleplus">
+                                    <i class="fa fa-google-plus-square"/>
+                                </a>
+                                <a t-att-href="website.social_github" t-if="website.social_github">
+                                    <i class="fa fa-github"/>
+                                </a>
+                            </h2>
+                        </div>
+                        <div class="col-md-5 col-lg-offset-1 box pav-custom" name="about_us">
+                            <div>
+                                <div class="box-heading">
+                                    <span t-field="res_company.name"/>
+                                    <small> -
+                                        <a href="/page/website.aboutus">About us</a>
+                                    </small>container
+                                </div>
+                                <p>We are a team of passionate people whose goal is to improve evone's life through disruptive products. We build great products to solve your business problems.</p>
+                                <p>Our products are designed for small to medium size companies willing to optimize their performance.</p>
+                            </div>
+                            <t t-set="languages" t-value="website.get_languages()"/>
+                            <ul class="list-inline js_language_selector mt16" t-if="(len(languages) &gt; 1 or editable)">
+                                <li t-foreach="languages" t-as="lg">
+                                    <a t-att-href="url_for('', lang=lg[0]) + '?' + keep_query()" t-att-data-default-lang="editable and 'true' if lg[0] == website.default_lang_code else None">
+                                        <t t-esc="lg[1].split('/').pop()"/>
+                                    </a>
+                                </li>
+                                <li groups="base.group_website_publisher">
+                                    <t t-set="url_return" t-value="url_for('', '[lang]') + '?' + keep_query()"/>
+                                    <a t-attf-href="/web#action=base.action_view_base_language_install&amp;website_id=#{website.id}&amp;url_return=#{url_return}">
+                                        <i class="fa fa-plus-circle"/>
+                                        Add a language...
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    </xpath>
+    <xpath expr="//div[@class='container mt16 mb8']" position="replace">
+        <div id="footer" class="footer-center">
+            <div class="container mt16 mb8">
+                <div class="pull-right" t-ignore="true" t-if="not editable">
+                    Create a <a href="http://www.odoo.com/page/website-builder">free website</a> with
+                    <a class="label label-danger" href="http://www.odoo.com/page/website-builder">Odoo</a>
+                </div>
+                <div class="pull-left text-muted">
+                    Copyright &amp;copy; <span t-field="res_company.name">Company name</span>
+                </div>
+            </div>
+        </div>
+    </xpath>
+</template>
+
+<template id="product_topmenu" inherit_id="website_sale.products" name="Top Menu">
+    <xpath expr="//div[@class='js_sale']" position="before">
+        <style type="text/css">
+            .select_li {
+                //background-color: #ff6346;
+                //height: 3px;
+                background-color: #e7e7e7;
+            }
+            /*.select_li > a {
+                color: #ff6346 !important;
+            }*/
+        </style>
+        <script type="text/javascript">
+            $(document).ready(function() {
+               /* if($("#tp_menu li").hasClass('select_li')){
+                    $(this).removeClass('select_li');
+                }
+                $("#tp_menu li").each(function(){
+                    var href = $(this).find('a').attr('href');
+                    var li_id = $(this).find('a').attr('id');
+                    var url = window.location.pathname;
+                    var split = url.split('/');
+                    var part = split[split.length -2];
+
+                    if (href === (window.location.pathname)) {
+                        $(this).addClass('select_li');
+                    } else if (part === li_id) {
+                        $(this).addClass('select_li');
+                    } else {
+                        var sel_li = url.split('/page/');
+                        if (sel_li.length > 1){
+                            var brand = sel_li[0].split('/');
+                            var parts = brand[brand.length -1];
+                            var lst_index = parts[parts.length - 1];
+                            if (lst_index === li_id){
+                                $(this).addClass('select_li');
+                            }
+                        } else {
+                            var lst_index = part[part.length - 1];
+                            if (lst_index === li_id){
+                                $(this).addClass('select_li');
+                            }
+                        }
+                    }
+                });*/
+            });
+        </script>
+        <div id="header" class="custom-menu">
+            <div id="pav-mainnav">
+                <div class="container">
+                    <div class="pav-megamenu">
+                        <div class="navbar navbar-default">
+                            <div id="mainmenutop" class="megamenu" role="navigation">
+                                <div class="navbar-header">
+                                    <a class="navbar-toggle hidden-lg hidden-md" href="javascript:;" data-target=".navbar-collapse" data-toggle="collapse">
+                                        <span class="fa fa-bars">
+                                        </span>
+                                    </a>
+                                    <div class="collapse navbar-collapse navbar-ex1-collapse hidden-sm hidden-xs">
+                                        <ul id="tp_menu" class="nav navbar-nav megamenu">
+                                            <li class="home first">
+                                                <a t-attf-href="/shop">
+                                                    <span class="menu-title">
+                                                        Home
+                                                    </span>
+                                                </a>
+                                            </li>
+                                            <t t-foreach="int_categories" t-as="c">
+                                                <t t-call="sale_enhancement.product_categories_recursive"/>
+                                            </t>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </xpath>
+    <xpath expr="//div[@id='wrap']//div[@class='products_pager']" position="replace">
+        <div class="products_pager">
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="col-sm-6" t-if="category">
+                    <ol id="breadcrumb" class="breadcrumb">
+                        <li t-if="category"><a t-attf-href="/shop">Home</a></li>
+                        <t t-foreach="b_crumb" t-as="bc">
+                            <li t-if="id"><a t-attf-href="/shop/category/{{ slug(bc) }}/{{ category.id if category else None }}/?{{ keep_query('search', 'filters', 'page') }}" t-field="bc.name"/></li>
+                            <li t-if="not id"><a t-attf-href="/shop/category/{{ slug(bc) }}/?{{ keep_query('search', 'filters', 'page') }}" t-field="bc.name"/></li>
+                        </t>
+                        <t t-if="main_categ">
+                            <li t-if="category"><a t-attf-href="/shop/category/{{ slug(main_categ) }}/{{ category.id if category else None }}/?{{ keep_query('search', 'filters', 'page') }}" t-field="main_categ.name"/></li>
+                        </t>
+                        <t t-if="not main_categ">
+                            <li t-if="category"><a t-attf-href="/shop/category/{{ slug(category) }}/?{{ keep_query('search', 'filters', 'page') }}" t-field="category.name"/></li>
+                        </t>
+                    </ol>
+                    </div>
+                    <div t-att-class="'col-sm-6' if category else 'col-sm-12'" t-att-style="'text-align:left' if category else 'text-align:center'">
+                        <t t-set="search_class">pagination form-inline col-md-3</t>
+                        <t t-call="website.pager"/>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </xpath>
+</template>
+
+<template id="custom_left_category" inherit_id="website_sale.products_categories" name="Left Category">
+    <xpath expr="//ul[@class='nav nav-pills nav-stacked mt16']" position="replace">
+        <div id="pav-verticalmenu" class="box pav-verticalmenu highlighted hidden-xs hidden-sm">
+            <div class="box-heading">
+                <span class="fa fa-bars"></span>
+                    All Products
+                <span class="shapes round">
+                    <em class="shapes bottom"></em>
+                </span>
+            </div>
+            <div class="box-content">
+                <div class="navbar navbar-default">
+                    <div id="verticalmenu" class="verticalmenu" role="navigation">
+                        <div class="navbar-header">
+                            <a href="javascript:;" data-target=".navbar-collapse" data-toggle="collapse" class="navbar-toggle">
+                                <span class="icon-bar">
+                                </span>
+                            </a>
+                            <div class="collapse navbar-collapse navbar-ex1-collapse">
+                                <ul id="left_main" class="nav navbar-nav verticalmenu">
+                                    <t t-foreach="categories" t-as="d1">
+                                        <t t-call="sale_enhancement.product_categories_recursive"/>
+                                    </t>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </xpath>
+</template>
+
+<template id="custom_product_items" inherit_id="website_sale.products_cart" name="Product Items">
+    <xpath expr="//div[@class='oe_product_image']" position="replace">
+    </xpath>
+    <xpath expr="//div[@class='ribbon-wrapper']" position="replace">
+        <div itemscope="itemscope" itemtype="http://schema.org/Product" style="width:145;height:210px">
+                <div class="ribbon-wrapper">
+                    <div class="ribbon btn btn-danger">Sale</div>
+                </div>
+                <div class="oe_product_image">
+                    <div class="product-block" style="height:164px">
+                        <div>
+                            <t t-if="id">
+                                <a t-attf-href="/shop/product/{{ slug(product) }}/?{{ keep_query('search', 'filters', category=(product.public_categ_id.id if product.public_categ_id.id else None), page=(pager['page']['num'] if pager['page']['num']&gt;1 else None)) }}">
+                                    <img class="img img-responsive" t-attf-src="/website/image/product.template/#{product.id}/image#{'' if product_image_big else '?max_width=300&amp;max_height=300'}"/>
+                                </a>
+                            </t>
+                            <t t-if=" not id">
+                                <a t-attf-href="/shop/product/{{ slug(product) }}/?{{ keep_query('search', 'filters', category=(category and int(category)), page=(pager['page']['num'] if pager['page']['num']&gt;1 else None)) }}">
+                                    <img class="img img-responsive" t-attf-src="/website/image/product.template/#{product.id}/image#{'' if product_image_big else '?max_width=300&amp;max_height=300'}"/>
+                                </a>
+                            </t>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    </xpath>
+    <xpath expr="//section" position="replace">
+        <h5 class="name" style="margin-top: 0px;margin-bottom: 4px;font-family: 'Source Sans Pro', sans-serif;">
+            <t t-if="id">
+                <strong>
+                    <a t-attf-href="/shop/product/{{ slug(product) }}/?{{ keep_query('search', 'filters', category=(product.public_categ_id.id if product.public_categ_id.id else None), page=(pager['page']['num'] if pager['page']['num']&gt;1 else None)) }}" t-field="product.name"/>
+                </strong>
+            </t>
+            <t t-if="not id">
+                <strong>
+                    <a t-attf-href="/shop/product/{{ slug(product) }}/?{{ keep_query('search', 'filters', category=(category and int(category)), page=(pager['page']['num'] if pager['page']['num']&gt;1 else None)) }}" t-field="product.name"/>
+                </strong>
+            </t>
+        </h5>
+        <div class="product_price" t-if="product.product_variant_ids">
+            <div class="price">
+                <t t-if="product.product_variant_ids[0].lst_price != product.product_variant_ids[0].price">
+                    <del class="text-danger"
+                        t-field="product.product_variant_ids[0].lst_price" t-field-options='{
+                            "widget": "monetary",
+                            "display_currency": "website.pricelist_id.currency_id"
+                    }'/>&amp;nbsp;
+              </t>
+              <span t-field="product.product_variant_ids[0].price"  t-field-options='{
+                   "widget": "monetary",
+                   "display_currency": "website.pricelist_id.currency_id"
+               }'/>
+            </div>
+        </div>
+    </xpath>
+</template>
+<template id="custom_add_cart" inherit_id="sale_enhancement.custom_product_items" name="Add to Cart">
+    <xpath expr="//div[@class='product_price']" position="inside">
+        <form action="/shop/add_cart/" class="js_add_cart_json" method="POST">
+              <div class="product-block">
+                <div class="action" style="width:200px">
+                    <div class="cart">
+                        <input name="product_id" t-att-value="product.product_variant_ids[0].id" type="hidden" />
+                        <a>
+                            <button class="btn btn-shopping-cart">
+                                <i class="fa fa-shopping-cart"> </i>
+                                <span>Add to Cart</span>
+                            </button>
+                        </a>
+                    </div>
+                </div>
+             </div>
+         </form>
+    </xpath>
+</template>
+
+<template id="product_page_categ" inherit_id="website_sale.product" name="Product Left Category">
+    <xpath expr="//section/div/div" position="attributes">
+        <attribute name="class">col-sm-7</attribute>
+    </xpath>
+    <xpath expr="//div[@class='col-sm-3']" position="replace">
+    </xpath>
+    <xpath expr="//section[@id='product_detail']" position="replace">
+        <section class="container oe_website_sale" id="product_detail">
+        <div class="row">
+
+        <div class="col-sm-3 col-md-3">
+            <div id="pav-verticalmenu" class="box pav-verticalmenu highlighted hidden-xs hidden-sm">
+                <div class="box-heading">
+                    <span class="fa fa-bars"></span>
+                        All Products
+                    <span class="shapes round">
+                        <em class="shapes bottom"></em>
+                    </span>
+                </div>
+                <div class="box-content">
+                    <div class="navbar navbar-default">
+                        <div id="verticalmenu" class="verticalmenu" role="navigation">
+                            <div class="navbar-header">
+                                <a href="javascript:;" data-target=".navbar-collapse" data-toggle="collapse" class="navbar-toggle">
+                                    <span class="icon-bar">
+                                    </span>
+                                </a>
+                                <div class="collapse navbar-collapse navbar-ex1-collapse">
+                                    <ul id="left_main" class="nav navbar-nav verticalmenu">
+                                        <t t-foreach="categories" t-as="d1">
+                                            <t t-call="sale_enhancement.product_categories_recursive"/>
+                                        </t>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6 col-md-6 col-lg-6">
+            <span t-field="product.image" t-field-options='{"widget": "image", "class": "product_detail_img"}'/>
+        </div>
+        <div class="col-sm-3 col-md-3 col-lg-3">
+            <h1 t-field="product.name">Product Name</h1>
+
+            <form action="/shop/add_cart/" class="js_add_cart_json" method="POST">
+                <input type="hidden" t-if="len(product.product_variant_ids) == 1" name="product_id" t-att-value="product.product_variant_ids[0].id"/>
+                <t t-if="len(product.product_variant_ids) &gt; 1">
+                    <label label-default="label-default" class="radio" t-foreach="product.product_variant_ids" t-as="variant_id">
+                        <input type="radio" name="product_id" t-att-value="variant_id.id" t-att-checked="variant_id == product.product_variant_ids[0] or None"/>
+                        <t t-esc="variant_id.variants or ''">Standard</t>
+                        <span class="badge" t-if="variant_id.price_extra">
+                            <t t-esc="variant_id.price_extra > 0 and '+' or ''"/><span t-field="variant_id.price_extra" t-field-options='{
+                                     "widget": "monetary",
+                                     "display_currency": "website.pricelist_id.currency_id"
+                             }'/>
+                        </span>
+                    </label>
+                </t>
+
+                <div class="product_price mt16" t-if="product.product_variant_ids">
+                    <h4>
+                        <t t-if="product.product_variant_ids[0].lst_price != product.product_variant_ids[0].price">
+                            <span class="text-danger" style="text-decoration: line-through;" t-field="product.product_variant_ids[0].lst_price"
+                                t-field-options='{
+                                    "widget": "monetary",
+                                    "display_currency": "website.pricelist_id.currency_id"
+                                }'/><br/>
+                        </t>
+                        <b class="oe_price" t-field="product.product_variant_ids[0].price"
+                            t-field-options='{
+                                "widget": "monetary",
+                                "display_currency": "website.pricelist_id.currency_id"
+                            }'/>
+                    </h4>
+                </div>
+                <a class="btn btn-primary btn-lg mt8 a-submit">Add to Cart</a>
+                <hr t-if="product.description_sale"/>
+                <div><p t-field="product.description_sale" class="text-muted"/></div>
+                <hr/>
+                <p class="text-muted">
+                    30-day money-back guarantee<br/>
+                    Free Shipping in U.S.<br/>
+                    Buy now, get in 2 days
+                </p>
+            </form>
+        </div>
+        </div>
+        </section>
+    </xpath>
+</template>
+
+</data>
+</openerp>
