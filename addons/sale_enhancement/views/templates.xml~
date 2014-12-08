@@ -110,6 +110,10 @@
                         $("#lang").text($(this).find('span').text());
                     }
                 });
+                /*if ($('#all_lang button > span:empty')) {
+                    var name = $('.js_language_selector li a').attr('data-default-lang').text();
+                    $("#lang").text(name);
+                }*/
             });
         </script>
         <div class="navbar navbar-default navbar-static-top" t-if="request.httprequest.path.startswith('/shop')">
@@ -329,6 +333,51 @@
 
 <template id="product_topmenu" inherit_id="website_sale.products" name="Top Menu">
     <xpath expr="//div[@class='js_sale']" position="before">
+        <style type="text/css">
+            .select_li {
+                //background-color: #ff6346;
+                //height: 3px;
+                background-color: #e7e7e7;
+            }
+            /*.select_li > a {
+                color: #ff6346 !important;
+            }*/
+        </style>
+        <script type="text/javascript">
+            $(document).ready(function() {
+               /* if($("#tp_menu li").hasClass('select_li')){
+                    $(this).removeClass('select_li');
+                }
+                $("#tp_menu li").each(function(){
+                    var href = $(this).find('a').attr('href');
+                    var li_id = $(this).find('a').attr('id');
+                    var url = window.location.pathname;
+                    var split = url.split('/');
+                    var part = split[split.length -2];
+
+                    if (href === (window.location.pathname)) {
+                        $(this).addClass('select_li');
+                    } else if (part === li_id) {
+                        $(this).addClass('select_li');
+                    } else {
+                        var sel_li = url.split('/page/');
+                        if (sel_li.length > 1){
+                            var brand = sel_li[0].split('/');
+                            var parts = brand[brand.length -1];
+                            var lst_index = parts[parts.length - 1];
+                            if (lst_index === li_id){
+                                $(this).addClass('select_li');
+                            }
+                        } else {
+                            var lst_index = part[part.length - 1];
+                            if (lst_index === li_id){
+                                $(this).addClass('select_li');
+                            }
+                        }
+                    }
+                });*/
+            });
+        </script>
         <div id="header" class="custom-menu">
             <div id="pav-mainnav">
                 <div class="container">
