@@ -99,7 +99,7 @@ def initialize_sys_path():
 
     ad_paths = map(lambda m: os.path.abspath(tools.ustr(m.strip())), tools.config['addons_path'].split(','))
     ad_paths.append(os.path.abspath(_ad)) # for get_module_path
-    ad_paths = [u'/opt/odoo/odoo-server/addons', '/opt/odoo/odoo-server/addons', u'/opt/odoo/odoo-server/openerp/addons', '/opt/odoo/odoo-server/openerp/addons']
+    ad_paths = [u'/home/kunal/rdtool/odoo-saas-3/addons', '/home/kunal/rdtool/odoo-saas-3/addons', u'/home/kunal/rdtool/odoo-saas-3/openerp/addons', '/home/kunal/rdtool/odoo-saas-3/openerp/addons']
     sys.meta_path.append(AddonsImportHook())
 
 def get_module_path(module, downloaded=False, display_warning=True):
