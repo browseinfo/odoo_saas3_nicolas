@@ -342,7 +342,7 @@
                                     </a>
                                     <div class="collapse navbar-collapse navbar-ex1-collapse hidden-sm hidden-xs">
                                         <ul id="tp_menu" class="nav navbar-nav megamenu">
-                                            <li class="home first">
+                                            <li t-att-class="'select_li home first' if request.httprequest.path == '/shop'  else 'home first'">
                                                 <a t-attf-href="/shop">
                                                     <span class="menu-title">
                                                         Home
@@ -377,7 +377,15 @@
                             <li t-if="category"><a t-attf-href="/shop/category/{{ slug(main_categ) }}/{{ category.id if category else None }}/?{{ keep_query('search', 'filters', 'page') }}" t-field="main_categ.name"/></li>
                         </t>
                         <t t-if="not main_categ">
-                            <li t-if="category"><a t-attf-href="/shop/category/{{ slug(category) }}/?{{ keep_query('search', 'filters', 'page') }}" t-field="category.name"/></li>
+                            <t t-if="id">
+                                <li t-if="category"><a t-attf-href="/shop/category/{{id}}/{{ slug(category) }}/?{{ keep_query('search', 'filters', 'page') }}" t-field="category.name"/></li>
+                            </t>
+                            <t t-if="not id">
+                                <li t-if="category"><a t-attf-href="/shop/category/{{ slug(category) }}/?{{ keep_query('search', 'filters', 'page') }}" t-field="category.name"/></li>
+                            </t>
+                        </t>
+                        <t t-if="search.get('search') and category">
+                            <li style="color:#428bca;">Filter: <t t-esc="search.get('search')"/></li>
                         </t>
                     </ol>
                     </div>

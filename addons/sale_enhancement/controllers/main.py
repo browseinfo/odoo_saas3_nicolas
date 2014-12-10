@@ -118,26 +118,35 @@ class sale_enhancement(http.Controller):
         base_domain = request.registry.get('website').ecommerce_get_product_domain()
         domain = list(base_domain)
         if search:
-            domain += ['|',
-                ('name', 'ilike', search),
-                ('description', 'ilike', search)]
-        if category:
             args_id = id.split('-')
             if len(args_id) > 1:
-                domain.append(('product_variant_ids.public_categ_id', 'child_of', int(args_id[-1])))
-                domain.append(('categ_id', 'child_of', int(category)))
-            else:
-                domain.append(('categ_id', 'child_of', int(category)))
+                domain += ['|',
+                           ('name', 'ilike', search),
+                           ('description', 'ilike', search), ('product_variant_ids.public_categ_id', 'child_of', int(args_id[-1]))]
+			else:
+				domain += ['|',
+                           ('name', 'ilike', search),
+                           ('description', 'ilike', search)]
+        if category:
+            domain.append(('categ_id', 'child_of', int(category)))
             if isinstance(category, (int,str,unicode)):
                 category = request.registry.get('product.public.category').browse(cr, uid, int(category), context=context)
+        
         if filters:
             filters = simplejson.loads(filters)
             if filters:
                 ids = self.attributes_to_ids(cr, uid, filters)
                 domain.append(('id', 'in', ids or [0]))
 
+        #domain code for products
+        pdomain = list(domain)
+        if category:
+            args_id = id.split('-')
+            if len(args_id) > 1:
+                pdomain.append(('product_variant_ids.public_categ_id', 'child_of', int(args_id[-1])))
+
         url = "/shop/"
-        product_count = product_obj.search_count(cr, uid, domain, context=context)
+        product_count = product_obj.search_count(cr, uid, pdomain, context=context)
         if search:
             post["search"] = search
         if filters:
@@ -148,7 +157,7 @@ class sale_enhancement(http.Controller):
         pager = request.website.pager(url=url, total=product_count, page=page, step=PPG, scope=7, url_args=post)
 
         request.context['pricelist'] = self.get_pricelist()
-        pids = product_obj.search(cr, uid, domain, limit=PPG+10, offset=pager['offset'], order=self._order, context=context)
+        pids = product_obj.search(cr, uid, pdomain, limit=PPG+10, offset=pager['offset'], order=self._order, context=context)
         products = product_obj.browse(cr, uid, pids, context=context)
 
         # added code
@@ -176,6 +185,23 @@ class sale_enhancement(http.Controller):
                 parent = parent.parent_id
         categories = list(all_categories)
         categories.sort(key=lambda x: x.sequence)
+
+        if search:
+            categories = []
+
+        if len(filter(lambda x: not x.parent_id, categories)) == 0:
+            domain = list(base_domain)
+            domain.append(('categ_id', 'child_of', int(category)))
+            category_ids = [product['public_categ_id'][0] for product in product_obj.read_group(cr, uid, domain, ['public_categ_id'], ['public_categ_id'], context=context) if product['public_categ_id']]
+            categories = category_obj.browse(cr, uid, category_ids, context=context)
+            all_categories = set(categories)
+            for cat in categories:
+                parent = cat.parent_id
+                while parent:
+                    all_categories.add(parent)
+                    parent = parent.parent_id
+            categories = list(all_categories)
+            categories.sort(key=lambda x: x.sequence)
 
         ## breadcrumb code
         main_categ = None
